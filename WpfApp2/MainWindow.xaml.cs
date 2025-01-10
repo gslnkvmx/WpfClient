@@ -26,6 +26,7 @@ namespace PAC_Man_Game_WPF_MOO_ICT
         private byte gid = 0;
         DispatcherTimer gameTimer = new DispatcherTimer(); // create a new instance of the dispatcher timer called game timer
         private const int CellSize = 20;
+        private int timeLeft = 30;
         int score = 0; // score keeping integer
         ThConsoleClient.CommunicationHandler handler;
         public MainWindow()
@@ -48,6 +49,10 @@ namespace PAC_Man_Game_WPF_MOO_ICT
             }
 
             MyCanvas.Focus();
+
+            gameTimer.Interval = TimeSpan.FromSeconds(1); // Интервал 1 секунда
+            gameTimer.Tick += GameTimer_Tick;
+            gameTimer.Start();
 
             GameLoop();
         }
@@ -73,6 +78,7 @@ namespace PAC_Man_Game_WPF_MOO_ICT
                 handler.SendRequest("TH " + gidS + " go d");
             }
         }
+
         private void GameSetUp()
         {
             handler.SendRequest("TH 0 start solo");
@@ -91,21 +97,30 @@ namespace PAC_Man_Game_WPF_MOO_ICT
                     var response = handler.ReciveResponseBytes();
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        Render.RenderTurn(response, MyCanvas);
+                        Render.RenderTurn(response, MyCanvas, txtScore);
                     });
                 }
 
             });
         }
-        private void GameOver(string message)
+        private void GameOver()
         {
-            // inside the game over function we passing in a string to show the final message to the game
-            gameTimer.Stop(); // stop the game timer
-            MessageBox.Show(message, "The Pac Man Game WPF MOO ICT"); // show a mesage box with the message that is passed in this function
+            gameTimer.Stop(); // Останавливаем таймер
+            MessageBox.Show("Время вышло! Игра окончена."); // Сообщение о завершении игры
             // when the player clicks ok on the message box
             // restart the application
             System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
             Application.Current.Shutdown();
+        }
+
+        private void GameTimer_Tick(object sender, EventArgs e)
+        {
+            timeLeft--; // Уменьшаем оставшееся время
+
+            if (timeLeft <= 0)
+            {
+                GameOver();
+            }
         }
     }
 }

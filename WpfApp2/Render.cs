@@ -86,7 +86,7 @@ namespace ThConsoleClient
             Canvas.SetTop(treasure, treasureY * CellSize);
         }
 
-        static public void RenderTurn(byte[] bytes, Canvas MyCanvas)
+        static public void RenderTurn(byte[] bytes, Canvas MyCanvas, Label scoreLabel)
         
         {
             byte playerX = bytes[3];
@@ -95,6 +95,8 @@ namespace ThConsoleClient
             RenderTreasure(bytes[7], bytes[6], MyCanvas);
 
             RenderPlayer(playerX, playerY, MyCanvas);
+
+            scoreLabel.Content = bytes[5].ToString();
         }
     }
 }

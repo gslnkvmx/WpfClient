@@ -7,6 +7,6 @@
         mc:Ignorable="d"
         Title="PAC Man Game WPF MOO ICT" Height="600" Width="800">
     <Canvas Name="MyCanvas" KeyDown="CanvasKeyDown" Focusable="True" Background="Black">
-        <Label FontSize="20" Name="txtScore" Foreground="White" Content="Score: 0" />
+        <Label FontSize="20" Name="txtScore" Foreground="White" Content="Score: 0" Canvas.Left="710" />
     </Canvas>
 </Window>
