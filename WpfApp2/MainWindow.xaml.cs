@@ -24,6 +24,7 @@ namespace PAC_Man_Game_WPF_MOO_ICT
     public partial class MainWindow : Window
     {
         private byte gid = 0;
+        private byte pid = 1;
         private const int CellSize = 20;
 
         int score = 0; // score keeping integer
@@ -38,6 +39,16 @@ namespace PAC_Man_Game_WPF_MOO_ICT
 
             InitializeComponent();
 
+        }
+
+        private void StartSoloGameButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Hide menu
+            StartSoloGameButton.Visibility = Visibility.Hidden;
+            StartDuoGameButton.Visibility = Visibility.Hidden;
+            GameIdTextBox.Visibility = Visibility.Hidden;
+            ConnectButton.Visibility = Visibility.Hidden;
+
             handler.SendRequest("TH 0 0 start solo");
             var response = handler.ReciveResponseBytes();
 
@@ -49,7 +60,78 @@ namespace PAC_Man_Game_WPF_MOO_ICT
 
             MyCanvas.Focus();
 
-            GameLoop();
+            // Start game
+            SoloGameLoop();
+        }
+
+        private void StartDuoGameButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Hide menu
+            StartSoloGameButton.Visibility = Visibility.Hidden;
+            StartDuoGameButton.Visibility = Visibility.Hidden;
+            GameIdTextBox.Visibility = Visibility.Hidden;
+            ConnectButton.Visibility = Visibility.Hidden;
+
+            handler.SendRequest("TH 0 0 start duo");
+            var response = handler.ReciveResponseBytes();
+
+            if (response[2] == 1)
+            {
+                gid = response[3];
+                Render.RenderInitDuoGame(response, MyCanvas);
+            }
+
+            MyCanvas.Focus();
+
+            // Start game
+            DuoGameLoop();
+        }
+
+        private void ConnectToGame(byte gameId)
+        {
+            pid = 2;
+
+            handler.SendRequest("TH " + gameId + " 2 connect");
+
+            var response = handler.ReciveResponseBytes();
+
+            if (response[2] == 1)
+            {
+                gid = response[3];
+                Render.RenderInitDuoGame(response, MyCanvas);
+            }
+
+            handler.SendRequest("TH " + gameId + " 2 begin");
+
+            MyCanvas.Focus();
+            DuoGameLoop();
+        }
+
+        private void ConnectButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Проверка, что поле не пустое
+            if (string.IsNullOrEmpty(GameIdTextBox.Text))
+            {
+                MessageBox.Show("Please enter a valid Game ID.");
+                return;
+            }
+
+            // Попытка преобразовать введенное значение в byte (ID игры)
+            if (byte.TryParse(GameIdTextBox.Text, out byte gameId))
+            {
+                // Скрыть меню
+                StartSoloGameButton.Visibility = Visibility.Hidden;
+                StartDuoGameButton.Visibility = Visibility.Hidden;
+                GameIdTextBox.Visibility = Visibility.Hidden;
+                ConnectButton.Visibility = Visibility.Hidden;
+
+                // Вызов метода ConnectToGame с переданным ID игры
+                ConnectToGame(gameId);
+            }
+            else
+            {
+                MessageBox.Show("Invalid Game ID. Please enter a number.");
+            }
         }
 
         private void CanvasKeyDown(object sender, KeyEventArgs e)
@@ -58,32 +140,23 @@ namespace PAC_Man_Game_WPF_MOO_ICT
             // this is the key down event
             if (e.Key == Key.Left)
             {
-                handler.SendRequest("TH " + gidS + " 1 go l");   
+                handler.SendRequest("TH " + gidS + " " + pid + " go l");   
             }
             if (e.Key == Key.Right)
             {
-                handler.SendRequest("TH " + gidS + " 1 go r");
+                handler.SendRequest("TH " + gidS + " " + pid + " go r");
             }
             if (e.Key == Key.Up)
             {
-                handler.SendRequest("TH " + gidS + " 1 go u");
+                handler.SendRequest("TH " + gidS + " " + pid + " go u");
             }
             if (e.Key == Key.Down)
             {
-                handler.SendRequest("TH " + gidS + " 1 go d");
+                handler.SendRequest("TH " + gidS + " " + pid + " go d");
             }
         }
 
-        private void GameSetUp()
-        {
-            handler.SendRequest("TH 0 0 start solo");
-            var response = handler.ReciveResponseBytes();
-            if (response[2] == 1)
-            {
-                var gid = response[3];
-            }
-        }
-        private void GameLoop()
+        private void SoloGameLoop()
         {
             Task.Run(() =>
             {
@@ -97,7 +170,27 @@ namespace PAC_Man_Game_WPF_MOO_ICT
                     }
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        Render.RenderTurn(response, MyCanvas, txtScore);
+                        Render.RenderSoloTurn(response, MyCanvas, txtScore);
+                    });
+                }
+            });
+        }
+
+        private void DuoGameLoop()
+        {
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    var response = handler.ReciveResponseBytes();
+                    if (response[2] == gid && response[4] == 100)
+                    {
+                        GameOver();
+                        break;
+                    }
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Render.RenderDuoTurn(response, MyCanvas, txtScore);
                     });
                 }
             });
@@ -107,7 +200,7 @@ namespace PAC_Man_Game_WPF_MOO_ICT
             MessageBox.Show("Время вышло! Игра окончена."); // Сообщение о завершении игры
             // when the player clicks ok on the message box
             // restart the application
-            //System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
             Application.Current.Shutdown();
         }
 
