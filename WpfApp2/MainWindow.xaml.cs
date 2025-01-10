@@ -24,9 +24,8 @@ namespace PAC_Man_Game_WPF_MOO_ICT
     public partial class MainWindow : Window
     {
         private byte gid = 0;
-        DispatcherTimer gameTimer = new DispatcherTimer(); // create a new instance of the dispatcher timer called game timer
         private const int CellSize = 20;
-        private int timeLeft = 30;
+
         int score = 0; // score keeping integer
         ThConsoleClient.CommunicationHandler handler;
         public MainWindow()
@@ -39,7 +38,7 @@ namespace PAC_Man_Game_WPF_MOO_ICT
 
             InitializeComponent();
 
-            handler.SendRequest("TH 0 start solo");
+            handler.SendRequest("TH 0 0 start solo");
             var response = handler.ReciveResponseBytes();
 
             if (response[2] == 1)
@@ -50,10 +49,6 @@ namespace PAC_Man_Game_WPF_MOO_ICT
 
             MyCanvas.Focus();
 
-            gameTimer.Interval = TimeSpan.FromSeconds(1); // Интервал 1 секунда
-            gameTimer.Tick += GameTimer_Tick;
-            gameTimer.Start();
-
             GameLoop();
         }
 
@@ -63,25 +58,25 @@ namespace PAC_Man_Game_WPF_MOO_ICT
             // this is the key down event
             if (e.Key == Key.Left)
             {
-                handler.SendRequest("TH " + gidS + " go l");   
+                handler.SendRequest("TH " + gidS + " 1 go l");   
             }
             if (e.Key == Key.Right)
             {
-                handler.SendRequest("TH " + gidS + " go r");
+                handler.SendRequest("TH " + gidS + " 1 go r");
             }
             if (e.Key == Key.Up)
             {
-                handler.SendRequest("TH " + gidS + " go u");
+                handler.SendRequest("TH " + gidS + " 1 go u");
             }
             if (e.Key == Key.Down)
             {
-                handler.SendRequest("TH " + gidS + " go d");
+                handler.SendRequest("TH " + gidS + " 1 go d");
             }
         }
 
         private void GameSetUp()
         {
-            handler.SendRequest("TH 0 start solo");
+            handler.SendRequest("TH 0 0 start solo");
             var response = handler.ReciveResponseBytes();
             if (response[2] == 1)
             {
@@ -95,32 +90,26 @@ namespace PAC_Man_Game_WPF_MOO_ICT
                 while (true)
                 {
                     var response = handler.ReciveResponseBytes();
+                    if (response[2] == gid && response[4] == 100)
+                    {
+                        GameOver();
+                        break;
+                    }
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         Render.RenderTurn(response, MyCanvas, txtScore);
                     });
                 }
-
             });
         }
         private void GameOver()
         {
-            gameTimer.Stop(); // Останавливаем таймер
             MessageBox.Show("Время вышло! Игра окончена."); // Сообщение о завершении игры
             // when the player clicks ok on the message box
             // restart the application
-            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
+            //System.Diagnostics.Process.Start(Application.ResourceAssembly.Location);
             Application.Current.Shutdown();
         }
 
-        private void GameTimer_Tick(object sender, EventArgs e)
-        {
-            timeLeft--; // Уменьшаем оставшееся время
-
-            if (timeLeft <= 0)
-            {
-                GameOver();
-            }
-        }
     }
 }

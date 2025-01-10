@@ -17,7 +17,7 @@ namespace ThConsoleClient
         const int maze_size = 16;
         private static byte[] _maze = new byte[maze_size * maze_size];
         private const int CellSize = 40;
-        private static byte[] _treasures = new byte[10 * 2];
+        private static byte[] _treasures = new byte[2];
 
         static Image playerImage = new Image
             {
@@ -59,7 +59,7 @@ namespace ThConsoleClient
                 }
             }
 
-            Array.Copy(bytes, 263, _treasures, 0, 20);
+            Array.Copy(bytes, 263, _treasures, 0, 2);
 
 
             MyCanvas.Children.Add(playerImage); // Добавляем изображение игрока на Canvas

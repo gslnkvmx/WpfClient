@@ -39,7 +39,7 @@ namespace ThConsoleClient
 
         public bool SayHello()
         {
-            SendRequest("TH 0 hello");
+            SendRequest("TH 0 0 hello");
             if (ReciveResponseString() == "Threasure hunters sever is ready!") return true;
             return false;
         }
