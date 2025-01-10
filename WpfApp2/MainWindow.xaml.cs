@@ -33,7 +33,7 @@ namespace PAC_Man_Game_WPF_MOO_ICT
         {
             // Create a new UdpClient
             var udpClient = new UdpClient();
-            var serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2004);
+            var serverEndpoint = new IPEndPoint(IPAddress.Parse("192.168.1.16"), 2004);
             handler = new ThConsoleClient.CommunicationHandler(udpClient, serverEndpoint);
             if (handler.SayHello()) Console.WriteLine("Connection opened!");
 
@@ -87,7 +87,7 @@ namespace PAC_Man_Game_WPF_MOO_ICT
             DuoGameLoop();
         }
 
-        private void ConnectToGame(byte gameId)
+        private bool ConnectToGame(byte gameId)
         {
             pid = 2;
 
@@ -99,12 +99,16 @@ namespace PAC_Man_Game_WPF_MOO_ICT
             {
                 gid = response[3];
                 Render.RenderInitDuoGame(response, MyCanvas);
+
+                handler.SendRequest("TH " + gameId + " 2 begin");
+
+                MyCanvas.Focus();
+                DuoGameLoop();
+
+                return true;
             }
 
-            handler.SendRequest("TH " + gameId + " 2 begin");
-
-            MyCanvas.Focus();
-            DuoGameLoop();
+            return false;
         }
 
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
@@ -119,14 +123,18 @@ namespace PAC_Man_Game_WPF_MOO_ICT
             // Попытка преобразовать введенное значение в byte (ID игры)
             if (byte.TryParse(GameIdTextBox.Text, out byte gameId))
             {
+                // Вызов метода ConnectToGame с переданным ID игры
+                if (!ConnectToGame(gameId))
+                { 
+                    MessageBox.Show("No game with such id!"); 
+                    return; 
+                }
+
                 // Скрыть меню
                 StartSoloGameButton.Visibility = Visibility.Hidden;
                 StartDuoGameButton.Visibility = Visibility.Hidden;
                 GameIdTextBox.Visibility = Visibility.Hidden;
                 ConnectButton.Visibility = Visibility.Hidden;
-
-                // Вызов метода ConnectToGame с переданным ID игры
-                ConnectToGame(gameId);
             }
             else
             {
