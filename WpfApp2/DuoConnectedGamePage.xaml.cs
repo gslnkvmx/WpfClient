@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ThConsoleClient;
 using static System.Formats.Asn1.AsnWriter;
+using Treasure_Hunters;
 
 namespace WpfApp2
 {
@@ -29,6 +30,7 @@ namespace WpfApp2
         private byte gid = 0;
         byte score1 = 0, score2 = 0; // score keeping integer
         ThConsoleClient.CommunicationHandler handler;
+
         public DuoConnectedGamePage(byte gameId)
         {
             InitializeComponent();
@@ -45,18 +47,22 @@ namespace WpfApp2
 
             if (response[2] == 1)
             {
+
                 gid = response[3];
                 Render.RenderInitDuoGame(response, DuoCanvas);
 
                 handler.SendRequest("TH " + gameId + " 2 begin");
-
+                (Application.Current.MainWindow as MainWindow).MainFrame.NavigationService.Navigate(this);
                 DuoCanvas.Focus();
                 DuoGameLoop();
             }  
             else
             {
                 MessageBox.Show("No game with such id!");
-                NavigationService.Navigate(new MainMenu());
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    //(Application.Current.MainWindow as MainWindow).MainFrame.NavigationService.Navigate(new MainMenu());
+                });
             }
         }
 

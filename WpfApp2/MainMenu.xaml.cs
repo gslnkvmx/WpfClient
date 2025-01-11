@@ -55,9 +55,12 @@ namespace WpfApp2
             }
 
             // Попытка преобразовать введенное значение в byte (ID игры)
-            if (byte.TryParse(GameIdTextBox.Text, out byte gameId))
+            if (byte.TryParse(GameIdTextBox.Text, out byte gameId) && gameId > 100)
             {
-                NavigationService.Navigate(new DuoConnectedGamePage(gameId));
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                   new DuoConnectedGamePage(gameId);
+                });
             }
             else
             {

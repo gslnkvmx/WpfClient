@@ -92,6 +92,7 @@ namespace ThConsoleClient
 
             RenderPlayer(playerX, playerY, MyCanvas, playerImage);
 
+            MyCanvas.Focus();
         }
 
         static public void RenderInitDuoGame(byte[] bytes, Canvas MyCanvas)
@@ -148,6 +149,8 @@ namespace ThConsoleClient
 
             RenderPlayer(player1X, player1Y, MyCanvas, playerImage);
             RenderPlayer(player2X, player2Y, MyCanvas, player2Image);
+
+            MyCanvas.Focus();
         }
 
         static private void RenderPlayer(int playerX, int playerY, Canvas MyCanvas, Image playerImage)
@@ -180,6 +183,8 @@ namespace ThConsoleClient
             RenderPlayer(playerX, playerY, MyCanvas, playerImage);
 
             scoreLabel.Content = "Score: " + bytes[5].ToString();
+
+            MyCanvas.Focus();
         }
 
         static public void RenderDuoTurn(byte[] bytes, Canvas MyCanvas, Label scoreLabel)
@@ -198,6 +203,8 @@ namespace ThConsoleClient
             RenderPlayer(player2X, player2Y, MyCanvas, player2Image);
 
             scoreLabel.Content = player1Score.ToString() + " : " + player2Score.ToString();
+
+            MyCanvas.Focus();
         }
     }
 }
