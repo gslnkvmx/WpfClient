@@ -1,0 +1,47 @@
+﻿<Page x:Class="WpfApp2.MainMenu"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:WpfApp2"
+      mc:Ignorable="d" 
+      Title="Treasure Hunters" Height="800" Width="800" Background="#e2bfbd">
+    <Grid>
+        <Grid.Resources >
+            <Style TargetType="Border">
+                <Setter Property="Padding" Value="15,15,30,15" />
+            </Style>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+
+        <Border Grid.Row="0" Grid.Column="0">
+            <Image Width="500">
+                <Image.Source>
+                    <BitmapImage DecodePixelWidth="500" UriSource="pack://application:,,,/images/logo.jpg"/>
+                </Image.Source>
+            </Image>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="0">
+            <Button x:Name="StartSoloGameButton" Content="Start solo Game" Click="StartSoloGameButton_Click"/>
+        </Border>
+        <Border Grid.Row="2" Grid.Column="0">
+            <Button x:Name="StartDuoGameButton" Content="Start duo Game" Click="StartDuoGameButton_Click"/>
+        </Border>
+        <!-- Поле для ввода ID игры -->
+        <Border Grid.Row="3" Grid.Column="0">
+            <TextBox x:Name="GameIdTextBox"  Width="150" />
+        </Border>
+
+        <!-- Кнопка Connect -->
+        <Border Grid.Row="4" Grid.Column="0">
+            <Button x:Name="ConnectButton" Content="Connect" Click="ConnectButton_Click"/>
+        </Border>
+    </Grid>
+</Page>

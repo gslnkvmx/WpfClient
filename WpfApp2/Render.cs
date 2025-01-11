@@ -16,15 +16,15 @@ namespace ThConsoleClient
     {
         const int maze_size = 16;
         private static byte[] _maze = new byte[maze_size * maze_size];
-        private const int CellSize = 40;
+        private const int CellSize = 37;
         private static byte[] _treasures = new byte[2];
 
         static Image playerImage = new Image
-            {
-                Source = new BitmapImage(new Uri("pack://application:,,,/images/hero.jpg")), // Укажите путь к изображению
-                Width = CellSize,
-                Height = CellSize
-            };
+        {
+            Source = new BitmapImage(new Uri("pack://application:,,,/images/hero.jpg")), // Укажите путь к изображению
+            Width = CellSize,
+            Height = CellSize
+        };
 
         static Image player2Image = new Image
         {
@@ -33,9 +33,9 @@ namespace ThConsoleClient
             Height = CellSize
         };
 
-        static Ellipse treasure = new Ellipse
+        static Image treasure = new Image
         {
-            Fill = Brushes.Gold,
+            Source = new BitmapImage(new Uri("pack://application:,,,/images/coin.gif")), // Укажите путь к изображению
             Width = CellSize,
             Height = CellSize
         };
@@ -55,14 +55,29 @@ namespace ThConsoleClient
                     {
                         Width = CellSize,
                         Height = CellSize,
-                        Fill = _maze[y*maze_size + x] == 0 ? Brushes.Black : Brushes.SandyBrown
+                        Fill = Brushes.Black
                     };
 
-                    // Устанавливаем позицию клетки
-                    Canvas.SetLeft(cell, x * CellSize);
-                    Canvas.SetTop(cell, y * CellSize);
-
-                    MyCanvas.Children.Add(cell); // Добавляем клетку на Canvas
+                    Image brick = new Image
+                    {
+                        Source = new BitmapImage(new Uri("pack://application:,,,/images/brick.jpg")), // Укажите путь к изображению
+                        Width = CellSize,
+                        Height = CellSize
+                    };
+                    if (_maze[y * maze_size + x] != 0)
+                    {
+                        // Устанавливаем позицию клетки
+                        Canvas.SetLeft(brick, x * CellSize);
+                        Canvas.SetTop(brick, y * CellSize);
+                        MyCanvas.Children.Add(brick); // Добавляем клетку на Canvas
+                    }
+                    else
+                    {
+                        // Устанавливаем позицию клетки
+                        Canvas.SetLeft(cell, x * CellSize);
+                        Canvas.SetTop(cell, y * CellSize);
+                        MyCanvas.Children.Add(cell); // Добавляем клетку на Canvas
+                    }
                 }
             }
 
@@ -96,14 +111,29 @@ namespace ThConsoleClient
                     {
                         Width = CellSize,
                         Height = CellSize,
-                        Fill = _maze[y * maze_size + x] == 0 ? Brushes.Black : Brushes.SandyBrown
+                        Fill = Brushes.Black
                     };
 
-                    // Устанавливаем позицию клетки
-                    Canvas.SetLeft(cell, x * CellSize);
-                    Canvas.SetTop(cell, y * CellSize);
-
-                    MyCanvas.Children.Add(cell); // Добавляем клетку на Canvas
+                    Image brick = new Image
+                    {
+                        Source = new BitmapImage(new Uri("pack://application:,,,/images/brick.jpg")), // Укажите путь к изображению
+                        Width = CellSize,
+                        Height = CellSize
+                    };
+                    if (_maze[y * maze_size + x] != 0)
+                    {
+                        // Устанавливаем позицию клетки
+                        Canvas.SetLeft(brick, x * CellSize);
+                        Canvas.SetTop(brick, y * CellSize);
+                        MyCanvas.Children.Add(brick); // Добавляем клетку на Canvas
+                    }
+                    else
+                    {
+                        // Устанавливаем позицию клетки
+                        Canvas.SetLeft(cell, x * CellSize);
+                        Canvas.SetTop(cell, y * CellSize);
+                        MyCanvas.Children.Add(cell); // Добавляем клетку на Canvas
+                    }
                 }
             }
 
@@ -133,6 +163,11 @@ namespace ThConsoleClient
             Canvas.SetLeft(treasure, treasureX * CellSize);
             Canvas.SetTop(treasure, treasureY * CellSize);
         }
+        static public void RenderGameId(byte gameId, Label gameIdLabel)
+
+        {
+            gameIdLabel.Content = "Game ID: " + gameId.ToString();
+        }
 
         static public void RenderSoloTurn(byte[] bytes, Canvas MyCanvas, Label scoreLabel)
         
@@ -144,7 +179,7 @@ namespace ThConsoleClient
 
             RenderPlayer(playerX, playerY, MyCanvas, playerImage);
 
-            scoreLabel.Content = bytes[5].ToString();
+            scoreLabel.Content = "Score: " + bytes[5].ToString();
         }
 
         static public void RenderDuoTurn(byte[] bytes, Canvas MyCanvas, Label scoreLabel)
