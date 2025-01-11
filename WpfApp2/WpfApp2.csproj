@@ -9,25 +9,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="images\brick.jpg" />
     <None Remove="images\hero.jpg" />
-    <None Remove="images\hero.png" />
-    <None Remove="images\orange.jpg" />
-    <None Remove="images\pacman.jpg" />
+    <None Remove="images\logo.jpg" />
+    <None Remove="images\output.jpg" />
     <None Remove="images\pink.jpg" />
-    <None Remove="images\red.jpg" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="images\brick.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="images\hero.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="images\hero.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="images\orange.jpg" />
-    <Resource Include="images\pacman.jpg" />
+    <Resource Include="images\logo.jpg" />
+    <Resource Include="images\output.jpg" />
     <Resource Include="images\pink.jpg" />
-    <Resource Include="images\red.jpg" />
+    <Resource Include="images\coin.gif" />
   </ItemGroup>
 
 </Project>
